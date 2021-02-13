@@ -32,7 +32,6 @@
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/polyfill-mbstring" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/console" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/nikic/php-parser" />
-      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/webimpress/safe-writer" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/psr/event-dispatcher" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/psr/cache" />
@@ -79,7 +78,6 @@
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/security-bundle" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/translation-contracts" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/translation" />
-      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/ocramius/proxy-manager" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/security-http" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/config" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/event-dispatcher" />
@@ -92,6 +90,7 @@
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/options-resolver" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/orm-pack" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/polyfill-intl-idn" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/friendsofphp/proxy-manager-lts" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

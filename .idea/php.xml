@@ -29,7 +29,6 @@
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/console" />
       <path value="$PROJECT_DIR$/symfony/vendor/nikic/php-parser" />
-      <path value="$PROJECT_DIR$/symfony/vendor/webimpress/safe-writer" />
       <path value="$PROJECT_DIR$/symfony/vendor/composer" />
       <path value="$PROJECT_DIR$/symfony/vendor/psr/event-dispatcher" />
       <path value="$PROJECT_DIR$/symfony/vendor/psr/cache" />
@@ -76,7 +75,6 @@
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/security-bundle" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/translation-contracts" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/translation" />
-      <path value="$PROJECT_DIR$/symfony/vendor/ocramius/proxy-manager" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/security-http" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/config" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/event-dispatcher" />
@@ -89,9 +87,15 @@
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/options-resolver" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/orm-pack" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/symfony/vendor/friendsofphp/proxy-manager-lts" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/symfony/vendor/autoload.php" />
+    </phpunit_settings>
   </component>
 </project>
