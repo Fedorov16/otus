@@ -3,11 +3,10 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .addEntry('app', './assets/app.js')
-    .addEntry('single', './assets/singlePage.js')
-    .copyFiles({
-        from: './assets/images',
-        to: 'images/[name].[ext]',
-    })
+    // .copyFiles({
+    //     from: './assets/images',
+    //     to: 'images/[name].[ext]',
+    // })
     .enableStimulusBridge('./assets/controllers.json')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
