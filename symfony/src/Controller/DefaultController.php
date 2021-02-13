@@ -16,7 +16,7 @@ class DefaultController extends AbstractController
      */
     public function indexAction()
     {
-        return $this->render('product/product.html.twig');
+        return $this->render('main/main.html.twig');
     }
 
 }
