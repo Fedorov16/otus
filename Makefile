@@ -5,6 +5,7 @@ in: _in
 yarn: _yarn
 watch: _watch
 prod: _prod
+open: _open
 
 _build:
 	docker-compose build && docker-compose up -d
@@ -26,3 +27,6 @@ _watch:
 
 _prod:
 	cd symfony && yarn encore production
+
+_open:
+	open http://127.0.0.1:91/main/all

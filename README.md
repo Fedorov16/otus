@@ -14,7 +14,7 @@ control+D
 
 make yarn
 
-http://127.0.0.1:91/main/all
+make open
 ```
 ### Up project
 
