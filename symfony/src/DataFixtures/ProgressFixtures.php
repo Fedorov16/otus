@@ -40,7 +40,6 @@ class ProgressFixtures extends Fixture implements DependentFixtureInterface
                 $manager->flush();
             }
         }
-
     }
 
     public function getDependencies()

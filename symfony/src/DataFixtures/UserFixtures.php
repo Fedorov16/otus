@@ -25,10 +25,8 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                 $user->setCreatedAt();
                 $user->setUpdatedAt();
                 $manager->persist($user);
-
             }
         }
-
         $manager->flush();
     }
 

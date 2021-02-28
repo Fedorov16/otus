@@ -32,11 +32,9 @@ class DisciplineFixtures extends Fixture implements DependentFixtureInterface
                 $discipline->setUpdatedAt();
 
                 $manager->persist($discipline);
-
             }
             $this->addReference($discipline_name, $discipline);
         }
-
         $manager->flush();
     }
 

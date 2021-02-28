@@ -19,7 +19,6 @@ class DepartmentFixtures extends Fixture
         self::DEPARTMENT_NAME_TRADS,
     ];
 
-
     public function load(ObjectManager $manager) :void
     {
         foreach (self::DEPARTMENT_REFERENCES as $department_name) {
@@ -31,8 +30,6 @@ class DepartmentFixtures extends Fixture
             $manager->persist($department);
             $this->addReference($department_name, $department);
         }
-
         $manager->flush();
-
     }
 }
