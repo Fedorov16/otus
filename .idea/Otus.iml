@@ -91,6 +91,22 @@
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/orm-pack" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony/polyfill-intl-idn" />
       <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/friendsofphp/proxy-manager-lts" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/var/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/doctrine" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/easycorp" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/friendsofphp" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/laminas" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/monolog" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/nikic" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/pagerfanta" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/psr" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/sensio" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/symfony" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/twig" />
+      <excludeFolder url="file://$MODULE_DIR$/postgres" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/behat/transliterator" />
+      <excludeFolder url="file://$MODULE_DIR$/symfony/vendor/gedmo/doctrine-extensions" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -88,6 +88,12 @@
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/orm-pack" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/polyfill-intl-idn" />
       <path value="$PROJECT_DIR$/symfony/vendor/friendsofphp/proxy-manager-lts" />
+      <path value="$PROJECT_DIR$/symfony/vendor/webimpress/safe-writer" />
+      <path value="$PROJECT_DIR$/symfony/vendor/ocramius/proxy-manager" />
+      <path value="$PROJECT_DIR$/symfony/vendor/behat/transliterator" />
+      <path value="$PROJECT_DIR$/symfony/vendor/gedmo/doctrine-extensions" />
+      <path value="$PROJECT_DIR$/symfony/vendor/doctrine/data-fixtures" />
+      <path value="$PROJECT_DIR$/symfony/vendor/doctrine/doctrine-fixtures-bundle" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
