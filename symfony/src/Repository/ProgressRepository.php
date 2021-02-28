@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Department;
+use App\Entity\Discipline;
 use App\Entity\Progress;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,32 +21,15 @@ class ProgressRepository extends ServiceEntityRepository
         parent::__construct($registry, Progress::class);
     }
 
-    // /**
-    //  * @return Progress[] Returns an array of Progress objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getProgressByDisciplineName($disciplineName): array
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+        return $this->createQueryBuilder('progress')
+            ->select('discipline.name', 'department.name', 'progress.level', 'progress.necessaryLevel')
+            ->innerJoin(Discipline::class, 'discipline', 'with', 'discipline.id = progress.discipline')
+            ->innerJoin(Department::class, 'department', 'with', 'department.id = discipline.department')
+            ->andWhere('discipline.name = :disciplineName')
+            ->setParameter('disciplineName', $disciplineName)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Progress
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

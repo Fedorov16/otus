@@ -3,20 +3,28 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
+ * @ORM\Table(
+ *     name="`user`",
+ *     indexes={
+ *         @ORM\Index(name="user__department_id__ind", columns={"department_id"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
- * @ORM\Table(name="`user`")
+ *
  */
-class User
+class User implements MetaTimestampsInterface
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer", unique=true)
      */
     private ?int $id;
 
@@ -37,13 +45,20 @@ class User
 
     /**
      * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
-    private ?\DateTimeInterface $createdAt;
+    private DateTime $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="update")
+     */
+    private DateTime $updatedAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?\DateTimeInterface $lastLoginAt;
+    private DateTime $lastLoginAt;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -52,13 +67,16 @@ class User
 
     /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="users")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
      */
     private ?Department $department;
 
     /**
-     * @ORM\OneToMany(targetEntity=Progress::class, mappedBy="UserId")
+     * @ORM\OneToMany(targetEntity=Progress::class, mappedBy="user")
      */
-    private ArrayCollection $progress;
+    private Collection $progress;
 
     public function __construct()
     {
@@ -106,28 +124,35 @@ class User
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(): void
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
+        $this->createdAt = new DateTime();
     }
 
-    public function getLastLoginAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->updatedAt = new DateTime();
+    }
+
+    public function getLastLoginAt(): DateTime
     {
         return $this->lastLoginAt;
     }
 
-    public function setLastLoginAt(\DateTimeInterface $lastLoginAt): self
+    public function setLastLoginAt(): DateTime
     {
-        $this->lastLoginAt = $lastLoginAt;
-
-        return $this;
+        $this->lastLoginAt = new DateTime();
+        return $this->lastLoginAt;
     }
 
     public function getImage(): ?string
@@ -168,19 +193,29 @@ class User
             $this->progress[] = $progress;
             $progress->setUser($this);
         }
-
         return $this;
     }
 
     public function removeProgress(Progress $progress): self
     {
-        if ($this->progress->removeElement($progress)) {
-            // set the owning side to null (unless already changed)
-            if ($progress->getUser() === $this) {
-                $progress->setUser(null);
-            }
+        if ($this->progress->removeElement($progress) && $progress->getUser() === $this) {
+            $progress->setUser(null);
         }
-
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'lastLoginAt' => $this->lastLoginAt->format('Y-m-d H:i:s'),
+            'image' => $this->image,
+            'department' => $this->department->getName(),
+            'progress' => array_map(static fn(Progress $progress) => $progress->toArray(), $this->progress->toArray()),
+        ];
     }
 }

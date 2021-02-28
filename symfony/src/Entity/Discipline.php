@@ -3,19 +3,27 @@
 namespace App\Entity;
 
 use App\Repository\DisciplineRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
+ * @ORM\Table(
+ *     name="discipline",
+ *     indexes={
+ *         @ORM\Index(name="discipline__department_id__ind", columns={"department_id"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass=DisciplineRepository::class)
  */
-class Discipline
+class Discipline implements MetaTimestampsInterface
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer", unique=true)
      */
     private ?int $id;
 
@@ -31,18 +39,33 @@ class Discipline
 
     /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="disciplines")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     * })
      */
     private ?Department $department;
 
     /**
-     * @ORM\OneToMany(targetEntity=Progress::class, mappedBy="disciplineId")
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
-    private ArrayCollection $progress;
+    private DateTime $createdAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=DepartmentProgress::class, mappedBy="disciplineId")
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
-    private ArrayCollection $departmentProgress;
+    private DateTime $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Progress::class, mappedBy="discipline")
+     */
+    private Collection $progress;
+
+    /**
+     * @ORM\OneToMany(targetEntity=DepartmentProgress::class, mappedBy="discipline")
+     */
+    private Collection $departmentProgress;
 
     public function __construct()
     {
@@ -91,9 +114,6 @@ class Discipline
         return $this;
     }
 
-    /**
-     * @return Collection|Progress[]
-     */
     public function getProgress(): Collection
     {
         return $this->progress;
@@ -105,25 +125,17 @@ class Discipline
             $this->progress[] = $progress;
             $progress->setDiscipline($this);
         }
-
         return $this;
     }
 
     public function removeProgress(Progress $progress): self
     {
-        if ($this->progress->removeElement($progress)) {
-            // set the owning side to null (unless already changed)
-            if ($progress->getDiscipline() === $this) {
-                $progress->setDiscipline(null);
-            }
+        if ($this->progress->removeElement($progress) && $progress->getDiscipline() === $this) {
+            $progress->setDiscipline(null);
         }
-
         return $this;
     }
 
-    /**
-     * @return Collection|DepartmentProgress[]
-     */
     public function getDepartmentProgress(): Collection
     {
         return $this->departmentProgress;
@@ -135,19 +147,44 @@ class Discipline
             $this->departmentProgress[] = $departmentProgress;
             $departmentProgress->setDiscipline($this);
         }
-
         return $this;
     }
 
     public function removeDepartmentProgress(DepartmentProgress $departmentProgress): self
     {
-        if ($this->departmentProgress->removeElement($departmentProgress)) {
-            // set the owning side to null (unless already changed)
-            if ($departmentProgress->getDiscipline() === $this) {
-                $departmentProgress->setDiscipline(null);
-            }
+        if ($this->departmentProgress->removeElement($departmentProgress) && $departmentProgress->getDiscipline() === $this) {
+            $departmentProgress->setDiscipline(null);
         }
-
         return $this;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(): void
+    {
+        $this->createdAt = new DateTime();
+    }
+
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->updatedAt = new DateTime();
+    }
+
+    public function InArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'image' => $this->getImage(),
+            'department' => $this->department->getName()
+        ];
     }
 }

@@ -6,6 +6,7 @@ yarn: _yarn
 watch: _watch
 prod: _prod
 open: _open
+fixtures: _fixtures
 
 _build:
 	docker-compose build && docker-compose up -d
@@ -30,3 +31,6 @@ _prod:
 
 _open:
 	open http://127.0.0.1:91/main/all
+
+_fixtures:
+	docker exec -it otus_php bash && php bin/console doctrine:fixtures:load --no-interaction

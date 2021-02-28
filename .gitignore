@@ -1,2 +1,14 @@
 /.idea
 postgres
+symfony/node_modules/
+symfony/public/build/
+symfony/npm-debug.log
+symfony/yarn-error.log
+
+symfony/.env.local
+symfony/.env.local.php
+symfony/.env.*.local
+symfony/public/bundles/
+symfony/var/
+symfony/var/log/dev.log
+symfony/vendor/

@@ -2,6 +2,8 @@
 
 namespace App\Repository;
 
+use App\Entity\Discipline;
+use App\Entity\Progress;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,32 +21,44 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getAllUsersEmails(): array
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
+        return array_column($this->createQueryBuilder('user')
+            ->select('user.email')
+            ->andWhere('user IS NOT NULL')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult(),
+        'email');
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?User
+    public function getAllUserIDs(): array
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
+        return array_column($this->createQueryBuilder('user')
+            ->select('user.id')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult(),
+            'id');
     }
-    */
+
+    public function getUserById($id): array
+    {
+        return $this->createQueryBuilder('user')
+            ->select('user.id', 'user.email', 'user.name', 'user.image')
+            ->andWhere('user.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()[0];
+    }
+
+    public function getUserInfoPercentById($id): array
+    {
+        return $this->createQueryBuilder('user')
+            ->select('user.id', 'user.name', 'discipline.name', 'progress.percent', 'progress.level', 'progress.necessaryLevel')
+            ->innerJoin(Progress::class, 'progress', 'with', 'user.id = progress.user')
+            ->innerJoin(Discipline::class, 'discipline', 'with', 'discipline.id = progress.discipline')
+            ->andWhere('user.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -3,19 +3,22 @@
 namespace App\Entity;
 
 use App\Repository\DepartmentRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
+ * @ORM\Table(name="department")
  * @ORM\Entity(repositoryClass=DepartmentRepository::class)
  */
-class Department
+class Department implements MetaTimestampsInterface
 {
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer", unique=true)
      */
     private ?int $id;
 
@@ -30,19 +33,31 @@ class Department
     private ?string $image;
 
     /**
-     * @ORM\OneToMany(targetEntity=User::class, mappedBy="DepartmentId")
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="create")
      */
-    private ArrayCollection $users;
+    private DateTime $createdAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Discipline::class, mappedBy="вузdepartmentId")
+     * @ORM\Column(type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
-    private ArrayCollection $disciplines;
+    private DateTime $updatedAt;
+
+    /**
+     * @ORM\OneToMany(targetEntity=User::class, mappedBy="department")
+     */
+    private Collection $users;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Discipline::class, mappedBy="department")
+     */
+    private Collection $disciplines;
 
     /**
      * @ORM\OneToMany(targetEntity=DepartmentProgress::class, mappedBy="department")
      */
-    private ArrayCollection $departmentProgress;
+    private Collection $departmentProgress;
 
     public function __construct()
     {
@@ -80,9 +95,6 @@ class Department
         return $this;
     }
 
-    /**
-     * @return Collection|User[]
-     */
     public function getUsers(): Collection
     {
         return $this->users;
@@ -100,19 +112,13 @@ class Department
 
     public function removeUser(User $user): self
     {
-        if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getDepartment() === $this) {
-                $user->setDepartment(null);
-            }
+        if ($this->users->removeElement($user) && $user->getDepartment() === $this) {
+            $user->setDepartment(null);
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection|Discipline[]
-     */
     public function getDisciplines(): Collection
     {
         return $this->disciplines;
@@ -130,19 +136,13 @@ class Department
 
     public function removeDiscipline(Discipline $discipline): self
     {
-        if ($this->disciplines->removeElement($discipline)) {
-            // set the owning side to null (unless already changed)
-            if ($discipline->getdepartment() === $this) {
-                $discipline->setdepartment(null);
-            }
+        if ($this->disciplines->removeElement($discipline) && $discipline->getdepartment() === $this) {
+            $discipline->setdepartment(null);
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection|DepartmentProgress[]
-     */
     public function getDepartmentProgress(): Collection
     {
         return $this->departmentProgress;
@@ -160,13 +160,42 @@ class Department
 
     public function removeDepartmentProgress(DepartmentProgress $departmentProgress): self
     {
-        if ($this->departmentProgress->removeElement($departmentProgress)) {
-            // set the owning side to null (unless already changed)
-            if ($departmentProgress->getDepartment() === $this) {
-                $departmentProgress->setDepartment(null);
-            }
+        if ($this->departmentProgress->removeElement($departmentProgress) && $departmentProgress->getDepartment() === $this) {
+            $departmentProgress->setDepartment(null);
         }
 
         return $this;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(): void
+    {
+        $this->createdAt = new DateTime();
+    }
+
+    public function getUpdatedAt(): DateTime
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(): void
+    {
+        $this->updatedAt = new DateTime();
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'image' => $this->image,
+            'departmentProgress' => array_map(static fn(DepartmentProgress $departmentProgress) => $departmentProgress->toArray(), $this->departmentProgress->toArray()),
+        ];
     }
 }
