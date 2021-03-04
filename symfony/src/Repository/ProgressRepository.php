@@ -5,8 +5,7 @@ namespace App\Repository;
 use App\Entity\Department;
 use App\Entity\Discipline;
 use App\Entity\Progress;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Progress|null find($id, $lockMode = null, $lockVersion = null)
@@ -14,12 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Progress[]    findAll()
  * @method Progress[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProgressRepository extends ServiceEntityRepository
+class ProgressRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Progress::class);
-    }
 
     public function getProgressByDisciplineName($disciplineName): array
     {

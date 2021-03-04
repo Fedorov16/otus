@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Department;
 
+use App\Entity\Discipline;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -22,6 +23,7 @@ class DepartmentFixtures extends Fixture
     public function load(ObjectManager $manager) :void
     {
         foreach (self::DEPARTMENT_REFERENCES as $department_name) {
+
             $department = new Department();
             $department->setName($department_name);
             $department->setCreatedAt();

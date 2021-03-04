@@ -29,17 +29,17 @@ class Progress implements MetaTimestampsInterface
     /**
      * @ORM\Column(type="integer")
      */
-    private ?int $percent;
+    private int $percent;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private ?int $level;
+    private int $level;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private ?int $necessaryLevel;
+    private int $necessaryLevel;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="progress")
@@ -92,7 +92,7 @@ class Progress implements MetaTimestampsInterface
         return $this->level;
     }
 
-    public function setLevel(?int $level): void
+    public function setLevel(int $level): void
     {
         $this->level = $level;
     }
@@ -102,7 +102,7 @@ class Progress implements MetaTimestampsInterface
         return $this->necessaryLevel;
     }
 
-    public function setNecessaryLevel(?int $necessaryLevel): void
+    public function setNecessaryLevel(int $necessaryLevel): void
     {
         $this->necessaryLevel = $necessaryLevel;
     }

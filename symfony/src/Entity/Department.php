@@ -25,7 +25,7 @@ class Department implements MetaTimestampsInterface
     /**
      * @ORM\Column(type="string", length=50)
      */
-    private ?string $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -50,20 +50,15 @@ class Department implements MetaTimestampsInterface
     private Collection $users;
 
     /**
-     * @ORM\OneToMany(targetEntity=Discipline::class, mappedBy="department")
+     * @ORM\ManyToMany(targetEntity=Discipline::class, inversedBy="departments")
+     * @ORM\JoinTable(name="department_disciplines")
      */
     private Collection $disciplines;
-
-    /**
-     * @ORM\OneToMany(targetEntity=DepartmentProgress::class, mappedBy="department")
-     */
-    private Collection $departmentProgress;
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->disciplines = new ArrayCollection();
-        $this->departmentProgress = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,54 +114,6 @@ class Department implements MetaTimestampsInterface
         return $this;
     }
 
-    public function getDisciplines(): Collection
-    {
-        return $this->disciplines;
-    }
-
-    public function addDiscipline(Discipline $discipline): self
-    {
-        if (!$this->disciplines->contains($discipline)) {
-            $this->disciplines[] = $discipline;
-            $discipline->setdepartment($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDiscipline(Discipline $discipline): self
-    {
-        if ($this->disciplines->removeElement($discipline) && $discipline->getdepartment() === $this) {
-            $discipline->setdepartment(null);
-        }
-
-        return $this;
-    }
-
-    public function getDepartmentProgress(): Collection
-    {
-        return $this->departmentProgress;
-    }
-
-    public function addDepartmentProgress(DepartmentProgress $departmentProgress): self
-    {
-        if (!$this->departmentProgress->contains($departmentProgress)) {
-            $this->departmentProgress[] = $departmentProgress;
-            $departmentProgress->setDepartment($this);
-        }
-
-        return $this;
-    }
-
-    public function removeDepartmentProgress(DepartmentProgress $departmentProgress): self
-    {
-        if ($this->departmentProgress->removeElement($departmentProgress) && $departmentProgress->getDepartment() === $this) {
-            $departmentProgress->setDepartment(null);
-        }
-
-        return $this;
-    }
-
     public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
@@ -187,6 +134,30 @@ class Department implements MetaTimestampsInterface
         $this->updatedAt = new DateTime();
     }
 
+    public function getDisciplines(): Collection
+    {
+        return $this->disciplines;
+    }
+
+    public function addDisciplines(Discipline $discipline): self
+    {
+        if (!$this->disciplines->contains($discipline)) {
+            $this->disciplines[] = $discipline;
+            $discipline->addDepartment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDisciplines(Discipline $discipline): self
+    {
+        if ($this->disciplines->removeElement($discipline)) {
+            $discipline->removeDepartment($this);
+        }
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -195,7 +166,6 @@ class Department implements MetaTimestampsInterface
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
             'image' => $this->image,
-            'departmentProgress' => array_map(static fn(DepartmentProgress $departmentProgress) => $departmentProgress->toArray(), $this->departmentProgress->toArray()),
         ];
     }
 }

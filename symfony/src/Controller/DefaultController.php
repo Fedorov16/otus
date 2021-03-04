@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,6 +26,8 @@ class DefaultController extends AbstractController
      */
     public function indexAction()
     {
+       $user =  $this->entityManager->getRepository(User::class);
+       dump($user->getAllUserIDs()); die();
         return $this->render('main/main.html.twig');
     }
 }

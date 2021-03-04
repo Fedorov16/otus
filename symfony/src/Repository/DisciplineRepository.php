@@ -3,8 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Discipline;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Discipline|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,12 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Discipline[]    findAll()
  * @method Discipline[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DisciplineRepository extends ServiceEntityRepository
+class DisciplineRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Discipline::class);
-    }
     public function getDisciplinesByDepartmentId($id): array
     {
         return array_column($this->createQueryBuilder('discipline')
@@ -26,5 +21,14 @@ class DisciplineRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getResult(), 'name');
+    }
+
+    public function getAllDisciplineIds(): array
+    {
+        return array_column($this->createQueryBuilder('discipline')
+            ->select('discipline.id')
+            ->getQuery()
+            ->getResult(),
+            'id');
     }
 }

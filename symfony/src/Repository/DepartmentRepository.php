@@ -3,8 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Department;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * @method Department|null find($id, $lockMode = null, $lockVersion = null)
@@ -12,13 +11,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Department[]    findAll()
  * @method Department[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class DepartmentRepository extends ServiceEntityRepository
+class DepartmentRepository extends EntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, Department::class);
-    }
-
     public function getAllDepartmentNames(): array
     {
         return array_column($this->createQueryBuilder('department')
@@ -27,5 +21,15 @@ class DepartmentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult(),
             'name');
+    }
+
+    public function getDepartmentIdByName($name): int
+    {
+        return $this->createQueryBuilder('department')
+            ->select('department.id')
+            ->andWhere('department.name = :name')
+            ->setParameter('name', $name)
+            ->getQuery()
+            ->getResult()[0]['id'];
     }
 }

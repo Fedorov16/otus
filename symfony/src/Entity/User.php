@@ -31,17 +31,17 @@ class User implements MetaTimestampsInterface
     /**
      * @ORM\Column(type="string", length=50)
      */
-    private ?string $name;
+    private string $name;
 
     /**
      * @ORM\Column(type="string", length=50)
      */
-    private ?string $email;
+    private string $email;
 
     /**
      * @ORM\Column(type="string", length=100)
      */
-    private ?string $password;
+    private string $password;
 
     /**
      * @ORM\Column(type="datetime")
@@ -93,7 +93,7 @@ class User implements MetaTimestampsInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -105,7 +105,7 @@ class User implements MetaTimestampsInterface
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 
