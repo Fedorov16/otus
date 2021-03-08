@@ -22,8 +22,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
                     ->setPassword('0000')
                     ->setImage('')
                     ->setLastLoginAt();
-                $user->setCreatedAt();
-                $user->setUpdatedAt();
+
                 $manager->persist($user);
             }
         }

@@ -17,7 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *     }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
- *
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements MetaTimestampsInterface
 {
@@ -129,6 +129,9 @@ class User implements MetaTimestampsInterface
         return $this->createdAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setCreatedAt(): void
     {
         $this->createdAt = new DateTime();
@@ -139,6 +142,9 @@ class User implements MetaTimestampsInterface
         return $this->updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setUpdatedAt(): void
     {
         $this->updatedAt = new DateTime();

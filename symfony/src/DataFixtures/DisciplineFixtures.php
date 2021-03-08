@@ -29,8 +29,6 @@ class DisciplineFixtures extends Fixture
                 $discipline
                     ->setName($discipline_name)
                     ->setImage('');
-                $discipline->setCreatedAt();
-                $discipline->setUpdatedAt();
 
                 $manager->persist($discipline);
                 $this->addReference($discipline_name, $discipline);

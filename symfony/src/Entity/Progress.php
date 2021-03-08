@@ -16,6 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *     }
  * )
  * @ORM\Entity(repositoryClass=ProgressRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Progress implements MetaTimestampsInterface
 {
@@ -136,6 +137,9 @@ class Progress implements MetaTimestampsInterface
         return $this->createdAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setCreatedAt(): void
     {
         $this->createdAt = new DateTime();
@@ -146,6 +150,9 @@ class Progress implements MetaTimestampsInterface
         return $this->updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setUpdatedAt(): void
     {
         $this->updatedAt = new DateTime();

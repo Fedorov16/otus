@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Table(name="discipline")
  * @ORM\Entity(repositoryClass=DisciplineRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Discipline implements MetaTimestampsInterface
 {
@@ -117,6 +118,9 @@ class Discipline implements MetaTimestampsInterface
         return $this->createdAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setCreatedAt(): void
     {
         $this->createdAt = new DateTime();
@@ -127,6 +131,9 @@ class Discipline implements MetaTimestampsInterface
         return $this->updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setUpdatedAt(): void
     {
         $this->updatedAt = new DateTime();

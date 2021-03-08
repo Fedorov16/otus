@@ -26,8 +26,6 @@ class DepartmentFixtures extends Fixture
 
             $department = new Department();
             $department->setName($department_name);
-            $department->setCreatedAt();
-            $department->setUpdatedAt();
 
             $manager->persist($department);
             $this->addReference($department_name, $department);
