@@ -66,6 +66,11 @@ class User implements MetaTimestampsInterface
     private ?string $image;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isDeleted;
+
+    /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="users")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
@@ -173,7 +178,17 @@ class User implements MetaTimestampsInterface
         return $this;
     }
 
-    public function getDepartment(): ?Department
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
+    }
+
+    public function getDepartment(): Department
     {
         return $this->department;
     }

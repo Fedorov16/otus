@@ -34,6 +34,11 @@ class Discipline implements MetaTimestampsInterface
     private ?string $image;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isDeleted;
+
+    /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
@@ -89,6 +94,16 @@ class Discipline implements MetaTimestampsInterface
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
     }
 
     public function getProgress(): Collection
@@ -160,7 +175,7 @@ class Discipline implements MetaTimestampsInterface
         return $this;
     }
 
-    public function InArray(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),

@@ -34,6 +34,11 @@ class Department implements MetaTimestampsInterface
     private ?string $image;
 
     /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isDeleted;
+
+    /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
      */
@@ -89,6 +94,16 @@ class Department implements MetaTimestampsInterface
         $this->image = $image;
 
         return $this;
+    }
+
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
     }
 
     public function getUsers(): Collection
@@ -173,6 +188,7 @@ class Department implements MetaTimestampsInterface
             'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
             'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
             'image' => $this->image,
+            'users' => array_map(static fn(User $user) => $user->toArray(), $this->users->toArray())
         ];
     }
 }

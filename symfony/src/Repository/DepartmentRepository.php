@@ -13,17 +13,28 @@ use Doctrine\ORM\EntityRepository;
  */
 class DepartmentRepository extends EntityRepository
 {
+    public function getAllDepartments(): array
+    {
+        $qb = $this->createQueryBuilder('department');
+        return $qb
+            ->andWhere($qb->expr()->isNull('department.isDeleted'))
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getAllDepartmentNames(): array
     {
-        return array_column($this->createQueryBuilder('department')
+        $qb = $this->createQueryBuilder('department');
+        return array_column($qb
             ->select('department.name')
             ->andWhere('department IS NOT NULL')
+            ->andWhere($qb->expr()->isNull('department.isDeleted'))
             ->getQuery()
             ->getResult(),
             'name');
     }
 
-    public function getDepartmentIdByName($name): int
+    public function getDepartmentIdByName(string $name): int
     {
         return $this->createQueryBuilder('department')
             ->select('department.id')
@@ -31,5 +42,25 @@ class DepartmentRepository extends EntityRepository
             ->setParameter('name', $name)
             ->getQuery()
             ->getResult()[0]['id'];
+    }
+
+    public function getDepartmentByName(string $name)
+    {
+        $qb = $this->createQueryBuilder('department');
+        return $qb
+            ->andWhere($qb->expr()->eq($qb->expr()->lower('department.name'), ':name'))
+            ->setParameter('name', strtolower($name))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getDepartmentById(int $id)
+    {
+        $qb = $this->createQueryBuilder('department');
+        return $qb
+            ->andWhere('department.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
     }
 }

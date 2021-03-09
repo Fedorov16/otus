@@ -15,11 +15,32 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
+    public function getAllUsers(): array
+    {
+        $qb = $this->createQueryBuilder('user');
+        return $qb
+            ->andWhere($qb->expr()->isNull('user.isDeleted'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getUserByEmail(string $userEmail): array
+    {
+        $qb = $this->createQueryBuilder('user');
+        return $qb
+            ->andWhere('user.email = :userEmail')
+            ->setParameter('userEmail', $userEmail)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function getAllUsersEmails(): array
     {
-        return array_column($this->createQueryBuilder('user')
+        $qb = $this->createQueryBuilder('user');
+        return array_column($qb
             ->select('user.email')
             ->andWhere('user IS NOT NULL')
+            ->andWhere($qb->expr()->isNull('user.isDeleted'))
             ->getQuery()
             ->getResult(),
         'email');
@@ -27,8 +48,10 @@ class UserRepository extends EntityRepository
 
     public function getAllUserIDs(): array
     {
-        return array_column($this->createQueryBuilder('user')
+        $qb = $this->createQueryBuilder('user');
+        return array_column($qb
             ->select('user.id')
+            ->andWhere($qb->expr()->isNull('user.isDeleted'))
             ->getQuery()
             ->getResult(),
             'id');
@@ -41,7 +64,7 @@ class UserRepository extends EntityRepository
             ->andWhere('user.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            ->getResult()[0];
+            ->getResult();
     }
 
     public function getUserInfoPercentById($id): array
