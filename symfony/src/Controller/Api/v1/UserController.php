@@ -25,10 +25,13 @@ class UserController
     /**
      * @Route("", methods={"GET"})
      */
-    public function getUsersAction(): Response
+    public function getUsersAction(Request $request): Response
     {
-        $users = $this->userService->getAllUsers();
-        $code = empty($users) ? 400:200;
+        $perPage = $request->query->get('perPage');
+        $page = $request->query->get('page');
+        $users = $this->userService->getAllUsers($page ?? 0, $perPage ?? 20);
+
+        $code = empty($users) ? 204:200;
 
         return new JsonResponse(['users' => array_map(static fn(User $user) => $user->toArray(), $users)], $code);
     }

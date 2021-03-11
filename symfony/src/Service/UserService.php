@@ -18,9 +18,10 @@ class UserService
         $this->em = $em;
     }
 
-    public function getAllUsers()
+    public function getAllUsers(int $page, int $perPage)
     {
-        return $this->em->getRepository(User::class)->getAllUsers();
+        $userRepository = $this->em->getRepository(User::class);
+        return $userRepository->getAllUsers($page, $perPage);
     }
 
     public function isUserExistByEmail(string $userEmail): bool

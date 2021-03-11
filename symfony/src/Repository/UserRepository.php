@@ -15,11 +15,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
-    public function getAllUsers(): array
+    public function getAllUsers(int $page, int $perPage): array
     {
         $qb = $this->createQueryBuilder('user');
         return $qb
             ->andWhere($qb->expr()->isNull('user.isDeleted'))
+            ->setFirstResult($perPage * $page)
+            ->setMaxResults($perPage)
             ->getQuery()
             ->getResult();
     }
