@@ -7,6 +7,7 @@ watch: _watch
 prod: _prod
 open: _open
 fixtures: _fixtures
+router: _router
 
 _build:
 	docker-compose build && docker-compose up -d
@@ -34,3 +35,6 @@ _open:
 
 _fixtures:
 	docker exec -it otus_php php bin/console doctrine:fixtures:load
+
+_router:
+	docker exec -it otus_php php bin/console debug:router

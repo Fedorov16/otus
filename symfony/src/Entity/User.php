@@ -17,7 +17,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *     }
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
- *
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements MetaTimestampsInterface
 {
@@ -64,6 +64,11 @@ class User implements MetaTimestampsInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $image;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isDeleted;
 
     /**
      * @ORM\ManyToOne(targetEntity=Department::class, inversedBy="users")
@@ -129,6 +134,9 @@ class User implements MetaTimestampsInterface
         return $this->createdAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setCreatedAt(): void
     {
         $this->createdAt = new DateTime();
@@ -139,6 +147,9 @@ class User implements MetaTimestampsInterface
         return $this->updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setUpdatedAt(): void
     {
         $this->updatedAt = new DateTime();
@@ -167,7 +178,17 @@ class User implements MetaTimestampsInterface
         return $this;
     }
 
-    public function getDepartment(): ?Department
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
+    }
+
+    public function getDepartment(): Department
     {
         return $this->department;
     }

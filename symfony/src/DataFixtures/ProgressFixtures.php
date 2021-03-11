@@ -33,8 +33,6 @@ class ProgressFixtures extends Fixture implements DependentFixtureInterface
                     ->setUser($user);
                 $progress->setLevel(random_int(1, 5));
                 $progress->setNecessaryLevel(random_int (3, 5));
-                $progress->setCreatedAt();
-                $progress->setUpdatedAt();
 
                 $manager->persist($progress);
                 $manager->flush();

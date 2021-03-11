@@ -12,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @ORM\Table(name="discipline")
  * @ORM\Entity(repositoryClass=DisciplineRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  */
 class Discipline implements MetaTimestampsInterface
 {
@@ -31,6 +32,11 @@ class Discipline implements MetaTimestampsInterface
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private ?string $image;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private ?bool $isDeleted;
 
     /**
      * @ORM\Column(type="datetime")
@@ -90,6 +96,16 @@ class Discipline implements MetaTimestampsInterface
         return $this;
     }
 
+    public function getIsDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(?bool $isDeleted): void
+    {
+        $this->isDeleted = $isDeleted;
+    }
+
     public function getProgress(): Collection
     {
         return $this->progress;
@@ -117,6 +133,9 @@ class Discipline implements MetaTimestampsInterface
         return $this->createdAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setCreatedAt(): void
     {
         $this->createdAt = new DateTime();
@@ -127,6 +146,9 @@ class Discipline implements MetaTimestampsInterface
         return $this->updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist()
+     */
     public function setUpdatedAt(): void
     {
         $this->updatedAt = new DateTime();
@@ -153,7 +175,7 @@ class Discipline implements MetaTimestampsInterface
         return $this;
     }
 
-    public function InArray(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
