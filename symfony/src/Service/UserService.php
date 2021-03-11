@@ -12,10 +12,15 @@ class UserService
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $em;
+    /**
+     * @var ProgressService
+     */
+    private ProgressService $progressService;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, ProgressService $progressService)
     {
         $this->em = $em;
+        $this->progressService = $progressService;
     }
 
     public function getAllUsers(int $page, int $perPage)
@@ -47,9 +52,16 @@ class UserService
         return $user->getId();
     }
 
-    public function updateUserById(int $userId, string $userName, string $userEmail, string $userPassword, string $departmentName): bool
+    public function updateUserById(int $userId, ?string $userName, ?string $userEmail, ?string $departmentName): bool
     {
-        $department = $this->getDepartmentByName($departmentName);
+        $departmentById = $this->getDepartmentByUserId($userId);
+        $departmentByName = $this->getDepartmentByName($departmentName);
+        if (isset($departmentByName) && isset($departmentById) && $departmentByName->getName() !== $departmentById->getName()) {
+            $this->progressService->deleteAllProgressToUserByPreviousDepartment($userId);
+            $this->progressService->addAllProgressToUserByDepartment($userId);
+        }
+        $department = $departmentByName ?? $departmentById;
+
         $user = $this->em->getRepository(User::class)->find($userId);
         if (!$department || !$user) {
             return false;
@@ -58,7 +70,6 @@ class UserService
         $user
             ->setName($userName)
             ->setEmail($userEmail)
-            ->setPassword($userPassword)
             ->setDepartment($department);
         $user->setUpdatedAt();
 
@@ -70,6 +81,12 @@ class UserService
     public function getDepartmentByName(string $departmentName): ?Department
     {
         $department = $this->em->getRepository(Department::class)->getDepartmentByName($departmentName);
+        return empty($department) ? null : $department[0];
+    }
+
+    public function getDepartmentByUserId(string $userId): ?Department
+    {
+        $department = $this->em->getRepository(Department::class)->getDepartmentByUserId($userId);
         return empty($department) ? null : $department[0];
     }
 
@@ -86,5 +103,23 @@ class UserService
         $this->em->flush();
 
         return true;
+    }
+
+    public function getUserData(int $userId): ?array
+    {
+        $user = $this->em->getRepository(User::class)->find($userId);
+        if (empty($user)) {
+            return null;
+        }
+        return ['data' => [
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'image' => $user->getImage(),
+            'department' => $user->getDepartment()->getName(),
+            ]];
+    }
+    public function getUserById(int $userId): ?User
+    {
+      return $this->em->getRepository(User::class)->find($userId);
     }
 }

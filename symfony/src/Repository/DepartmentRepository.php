@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Department;
+use App\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -34,16 +35,6 @@ class DepartmentRepository extends EntityRepository
             'name');
     }
 
-    public function getDepartmentIdByName(string $name): int
-    {
-        return $this->createQueryBuilder('department')
-            ->select('department.id')
-            ->andWhere('department.name = :name')
-            ->setParameter('name', $name)
-            ->getQuery()
-            ->getResult()[0]['id'];
-    }
-
     public function getDepartmentByName(string $name)
     {
         $qb = $this->createQueryBuilder('department');
@@ -59,6 +50,17 @@ class DepartmentRepository extends EntityRepository
         $qb = $this->createQueryBuilder('department');
         return $qb
             ->andWhere('department.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getDepartmentByUserId(int $id)
+    {
+        $qb = $this->createQueryBuilder('department');
+        return $qb
+            ->innerJoin(User::class, 'user', 'with', 'department.id = user.department')
+            ->andWhere('user.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
