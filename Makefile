@@ -31,7 +31,7 @@ _prod:
 	cd symfony && yarn encore production
 
 _open:
-	open http://127.0.0.1:91/api/v1/user/form
+	open http://127.0.0.1:91/api/v1/user/form/update/21
 
 _fixtures:
 	docker exec -it otus_php php bin/console doctrine:fixtures:load

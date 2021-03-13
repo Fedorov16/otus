@@ -3,13 +3,15 @@
 namespace App\Controller\Api\v1;
 
 use App\Entity\User;
-use App\Form\UserSaveForm;
+use App\Form\UserCreateForm;
+use App\Form\UserUpdateForm;
 use App\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 
 /** @Route("/api/v1/user") */
@@ -47,7 +49,42 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/form/{id}", methods={"GET"}, requirements={"id":"\d+"})
+     * @Route("/form/create", methods={"GET"})
+     * @return Response
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function getCreateFormUsersAction(): Response
+    {
+        $form = $this->createForm(UserCreateForm::class);
+        return new Response($this->twig->render("user/userCreateForm.html.twig", [
+            'form' => $form->createView(),
+        ]));
+    }
+
+    /**
+     * @Route("/form/create", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function createFormUsersAction(Request $request): Response
+    {
+        $form = $this->createForm(UserCreateForm::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userName = $form['name']->getData();
+            $userEmail = $form['email']->getData();
+            $userPassword = $form['password']->getData();
+            $departmentName = $form['department']->getData();
+            $UserId = $this->userService->saveUser($userName, $userEmail, $userPassword, $departmentName);
+            return new Response($UserId);
+        }
+        return new Response('Something went wrong');
+    }
+
+    /**
+     * @Route("/form/update/{id}", methods={"GET"}, requirements={"id":"\d+"})
      * @param int $id
      * @return Response
      * @throws \Twig\Error\LoaderError
@@ -57,8 +94,8 @@ class UserController extends AbstractController
     public function getUpdateFormUsersAction(int $id): Response
     {
         $userData = $this->userService->getUserData($id);
-        $form = $this->createForm(UserSaveForm::class, '', $userData);
-        $content = $this->twig->render("user/userSaveForm.html.twig", [
+        $form = $this->createForm(UserUpdateForm::class, '', $userData);
+        $content = $this->twig->render("user/userUpdateForm.html.twig", [
             'form' => $form->createView(),
         ]);
 
@@ -66,29 +103,22 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/form/{id}", methods={"POST"}, requirements={"id":"\d+"})
+     * @Route("/form/update/{id}", methods={"POST"}, requirements={"id":"\d+"})
      * @param Request $request
      * @param int $id
      * @return Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
      */
     public function updateFormUsersAction(Request $request, int $id): Response
     {
-        $form = $this->createForm(UserSaveForm::class);
+        $form = $this->createForm(UserUpdateForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $userName = $form['name']->getData();
             $userEmail = $form['email']->getData();
             $departmentName = $form['department']->getData();
-            $this->userService->updateUserById($id, $userName, $userEmail, $departmentName);
+            $response = $this->userService->updateUserById($id, $userName, $userEmail, $departmentName);
         }
-        $content = $this->twig->render("user/userSaveForm.html.twig", [
-            'form' => $form->createView(),
-        ]);
-
-        return new Response($content);
+        return new Response($response);
     }
 
     /**
@@ -130,7 +160,9 @@ class UserController extends AbstractController
         $userName = $request->query->get('name');
         $userEmail = $request->query->get('email');
         $userDepartment = $request->query->get('department');
-
+        if (!isset($userId, $userName, $userEmail, $userDepartment)) {
+            return new JsonResponse(['success' => false], 400);
+        }
         $result = $this->userService->updateUserById($userId, $userName, $userEmail, $userDepartment);
 
         return new JsonResponse(['success' => $result], $result ? 200 : 404);

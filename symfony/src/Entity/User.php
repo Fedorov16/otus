@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Table(
@@ -19,7 +20,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\HasLifecycleCallbacks()
  */
-class User implements MetaTimestampsInterface
+class User implements MetaTimestampsInterface, UserInterface
 {
     /**
      * @ORM\Id
@@ -39,7 +40,7 @@ class User implements MetaTimestampsInterface
     private string $email;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=255)
      */
     private string $password;
 
@@ -76,7 +77,7 @@ class User implements MetaTimestampsInterface
      *   @ORM\JoinColumn(name="department_id", referencedColumnName="id")
      * })
      */
-    private ?Department $department;
+    private Department $department;
 
     /**
      * @ORM\OneToMany(targetEntity=Progress::class, mappedBy="user")
@@ -193,7 +194,7 @@ class User implements MetaTimestampsInterface
         return $this->department;
     }
 
-    public function setDepartment(?Department $department): self
+    public function setDepartment(Department $department): self
     {
         $this->department = $department;
 
@@ -238,5 +239,22 @@ class User implements MetaTimestampsInterface
             'department' => $this->department->getName(),
             'progress' => array_map(static fn(Progress $progress) => $progress->toArray(), $this->progress->toArray()),
         ];
+    }
+
+    public function getRoles()
+    {
+    }
+
+    public function getSalt()
+    {
+    }
+
+    public function getUsername(): string
+    {
+        return $this->name;
+    }
+
+    public function eraseCredentials()
+    {
     }
 }

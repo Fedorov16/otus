@@ -67,4 +67,14 @@ class DepartmentService
 
         return true;
     }
+
+    public function getAllAssociativeDepartmentNames(): array
+    {
+        $preparedNames = [];
+        $departmentNames = $this->em->getRepository(Department::class)->getAllDepartmentNames();
+        foreach ($departmentNames as $departmentName) {
+            $preparedNames[$departmentName] = $departmentName;
+        }
+        return $preparedNames;
+    }
 }
