@@ -77,8 +77,8 @@ class UserController extends AbstractController
             $userEmail = $form['email']->getData();
             $userPassword = $form['password']->getData();
             $departmentName = $form['department']->getData();
-            $UserId = $this->userService->saveUser($userName, $userEmail, $userPassword, $departmentName);
-            return new Response($UserId);
+            $userId = $this->userService->saveUser($userName, $userEmail, $userPassword, $departmentName);
+            return new Response($userId);
         }
         return new Response('Something went wrong');
     }
