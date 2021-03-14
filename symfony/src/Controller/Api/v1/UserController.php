@@ -2,28 +2,41 @@
 
 namespace App\Controller\Api\v1;
 
+use App\DTO\UserDTO;
 use App\Entity\User;
+use App\Form\UserCreateForm;
+use App\Form\UserUpdateForm;
 use App\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Twig\Environment;
 
 /** @Route("/api/v1/user") */
-class UserController
+class UserController extends AbstractController
 {
     /**
      * @var UserService
      */
     private UserService $userService;
+    /**
+     * @var Environment
+     */
+    private Environment $twig;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, Environment $twig)
     {
         $this->userService = $userService;
+        $this->twig = $twig;
     }
 
     /**
      * @Route("", methods={"GET"})
+     * @param Request $request
+     * @return Response
      */
     public function getUsersAction(Request $request): Response
     {
@@ -34,6 +47,77 @@ class UserController
         $code = empty($users) ? 204:200;
 
         return new JsonResponse(['users' => array_map(static fn(User $user) => $user->toArray(), $users)], $code);
+    }
+
+    /**
+     * @Route("/form/create", methods={"GET"})
+     * @return Response
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function getCreateFormUsersAction(): Response
+    {
+        $form = $this->createForm(UserCreateForm::class);
+        return new Response($this->twig->render("user/userCreateForm.html.twig", [
+            'form' => $form->createView(),
+        ]));
+    }
+
+    /**
+     * @Route("/form/create", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     */
+    public function createFormUsersAction(Request $request): Response
+    {
+        $form = $this->createForm(UserCreateForm::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $UserData = $form->getData();
+            $userDTO = new UserDTO($UserData);
+            $userId = $this->userService->saveUser($userDTO);
+            return new Response($userId);
+        }
+        return new Response('Something went wrong');
+    }
+
+    /**
+     * @Route("/form/update/{id}", methods={"GET"}, requirements={"id":"\d+"})
+     * @param int $id
+     * @return Response
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     */
+    public function getUpdateFormUsersAction(int $id): Response
+    {
+        $userData = $this->userService->getUserData($id);
+        $form = $this->createForm(UserUpdateForm::class, '', $userData);
+        $content = $this->twig->render("user/userUpdateForm.html.twig", [
+            'form' => $form->createView(),
+        ]);
+
+        return new Response($content);
+    }
+
+    /**
+     * @Route("/form/update/{id}", methods={"POST"}, requirements={"id":"\d+"})
+     * @param Request $request
+     * @param int $id
+     * @return Response
+     */
+    public function updateFormUsersAction(Request $request, int $id): Response
+    {
+        $form = $this->createForm(UserUpdateForm::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $userName = $form['name']->getData();
+            $userEmail = $form['email']->getData();
+            $departmentName = $form['department']->getData();
+            $response = $this->userService->updateUserById($id, $userName, $userEmail, $departmentName);
+        }
+        return new Response($response);
     }
 
     /**
@@ -74,10 +158,11 @@ class UserController
         $userId = $request->query->get('userId');
         $userName = $request->query->get('name');
         $userEmail = $request->query->get('email');
-        $userPassword = $request->query->get('password');
         $userDepartment = $request->query->get('department');
-
-        $result = $this->userService->updateUserById($userId, $userName, $userEmail, $userPassword, $userDepartment);
+        if (!isset($userId, $userName, $userEmail, $userDepartment)) {
+            return new JsonResponse(['success' => false], 400);
+        }
+        $result = $this->userService->updateUserById($userId, $userName, $userEmail, $userDepartment);
 
         return new JsonResponse(['success' => $result], $result ? 200 : 404);
     }

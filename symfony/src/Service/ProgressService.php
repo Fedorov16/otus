@@ -120,4 +120,14 @@ class ProgressService
         $this->em->flush();
         return true;
     }
+
+    public function deleteAllProgressToUserByPreviousDepartment(int $id): void
+    {
+        $user = $this->em->getRepository(User::class)->find($id);
+        $allProgress = $user->getProgress();
+        foreach ($allProgress as $progress) {
+            $this->em->remove($progress);
+        }
+        $this->em->flush();
+    }
 }

@@ -2,9 +2,13 @@
 
 namespace App\Service;
 
+use App\DTO\UserDTO;
 use App\Entity\Department;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class UserService
 {
@@ -12,10 +16,24 @@ class UserService
      * @var EntityManagerInterface
      */
     private EntityManagerInterface $em;
+    /**
+     * @var ProgressService
+     */
+    private ProgressService $progressService;
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private UserPasswordEncoderInterface $passwordEncoder;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(
+        EntityManagerInterface $em,
+        UserPasswordEncoderInterface $passwordEncoder,
+        ProgressService $progressService
+    )
     {
         $this->em = $em;
+        $this->progressService = $progressService;
+        $this->passwordEncoder = $passwordEncoder;
     }
 
     public function getAllUsers(int $page, int $perPage)
@@ -29,15 +47,15 @@ class UserService
         return !empty($this->em->getRepository(User::class)->getUserByEmail($userEmail));
     }
 
-    public function saveUser(string $userName, string $userEmail, string $password, string $departmentName): ?int
+    public function saveUser(UserDTO $userDTO): ?int
     {
-        $department = $this->getDepartmentByName($departmentName);
+        $department = $this->getDepartmentByName($userDTO->getDepartmentName());
 
         $user = new User();
         $user
-            ->setName($userName)
-            ->setEmail($userEmail)
-            ->setPassword($password)
+            ->setName($userDTO->getName())
+            ->setEmail($userDTO->getEmail())
+            ->setPassword($this->passwordEncoder->encodePassword($user, $userDTO->getPassword()))
             ->setDepartment($department)
             ->setLastLoginAt();
 
@@ -47,30 +65,42 @@ class UserService
         return $user->getId();
     }
 
-    public function updateUserById(int $userId, string $userName, string $userEmail, string $userPassword, string $departmentName): bool
+    public function updateUserById(int $userId, string $userName, string $userEmail, string $departmentName): string
     {
-        $department = $this->getDepartmentByName($departmentName);
         $user = $this->em->getRepository(User::class)->find($userId);
-        if (!$department || !$user) {
-            return false;
+        if (!$user) {
+            return new Response($userId . 'not found');
         }
+
+        $departmentById = $this->getDepartmentByUserId($userId);
+        $departmentByName = $this->getDepartmentByName($departmentName);
+        if (isset($departmentByName) && $departmentByName->getName() !== $departmentById->getName()) {
+            $this->progressService->deleteAllProgressToUserByPreviousDepartment($userId);
+            $this->progressService->addAllProgressToUserByDepartment($userId);
+        }
+        $department = $departmentByName ?? $departmentById;
 
         $user
             ->setName($userName)
             ->setEmail($userEmail)
-            ->setPassword($userPassword)
             ->setDepartment($department);
+
         $user->setUpdatedAt();
 
         $this->em->flush();
 
-        return true;
+        return new Response($userId . 'was saved');
     }
 
     public function getDepartmentByName(string $departmentName): ?Department
     {
         $department = $this->em->getRepository(Department::class)->getDepartmentByName($departmentName);
         return empty($department) ? null : $department[0];
+    }
+
+    public function getDepartmentByUserId(string $userId): Department
+    {
+        return $this->em->getRepository(Department::class)->getDepartmentByUserId($userId)[0];
     }
 
     public function deleteUserById(int $userId): bool
@@ -86,5 +116,23 @@ class UserService
         $this->em->flush();
 
         return true;
+    }
+
+    public function getUserData(int $userId): ?array
+    {
+        $user = $this->em->getRepository(User::class)->find($userId);
+        if (empty($user)) {
+            return null;
+        }
+        return ['data' => [
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'image' => $user->getImage(),
+            'department' => $user->getDepartment()->getName(),
+            ]];
+    }
+    public function getUserById(int $userId): ?User
+    {
+      return $this->em->getRepository(User::class)->find($userId);
     }
 }
