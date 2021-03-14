@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\DTO\UserDTO;
 use App\Entity\Department;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,15 +47,15 @@ class UserService
         return !empty($this->em->getRepository(User::class)->getUserByEmail($userEmail));
     }
 
-    public function saveUser(string $userName, string $userEmail, string $password, string $departmentName): ?int
+    public function saveUser(UserDTO $userDTO): ?int
     {
-        $department = $this->getDepartmentByName($departmentName);
+        $department = $this->getDepartmentByName($userDTO->getDepartmentName());
 
         $user = new User();
         $user
-            ->setName($userName)
-            ->setEmail($userEmail)
-            ->setPassword($this->passwordEncoder->encodePassword($user, $password))
+            ->setName($userDTO->getName())
+            ->setEmail($userDTO->getEmail())
+            ->setPassword($this->passwordEncoder->encodePassword($user, $userDTO->getPassword()))
             ->setDepartment($department)
             ->setLastLoginAt();
 

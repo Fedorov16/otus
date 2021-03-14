@@ -2,6 +2,7 @@
 
 namespace App\Controller\Api\v1;
 
+use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Form\UserCreateForm;
 use App\Form\UserUpdateForm;
@@ -39,8 +40,8 @@ class UserController extends AbstractController
      */
     public function getUsersAction(Request $request): Response
     {
-        $perPage = $request->request->get('perPage');
-        $page = $request->request->get('page');
+        $perPage = $request->query->get('perPage');
+        $page = $request->query->get('page');
         $users = $this->userService->getAllUsers($page ?? 0, $perPage ?? 20);
 
         $code = empty($users) ? 204:200;
@@ -73,11 +74,9 @@ class UserController extends AbstractController
         $form = $this->createForm(UserCreateForm::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $userName = $form['name']->getData();
-            $userEmail = $form['email']->getData();
-            $userPassword = $form['password']->getData();
-            $departmentName = $form['department']->getData();
-            $userId = $this->userService->saveUser($userName, $userEmail, $userPassword, $departmentName);
+            $UserData = $form->getData();
+            $userDTO = new UserDTO($UserData);
+            $userId = $this->userService->saveUser($userDTO);
             return new Response($userId);
         }
         return new Response('Something went wrong');
