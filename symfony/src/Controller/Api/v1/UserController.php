@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Twig\Environment;
 
 /** @Route("/api/v1/user") */
@@ -44,7 +43,7 @@ class UserController extends AbstractController
         $page = $request->query->get('page');
         $users = $this->userService->getAllUsers($page ?? 0, $perPage ?? 20);
 
-        $code = empty($users) ? 204:200;
+        $code = empty($users) ? 204 : 200;
 
         return new JsonResponse(['users' => array_map(static fn(User $user) => $user->toArray(), $users)], $code);
     }
@@ -93,6 +92,9 @@ class UserController extends AbstractController
     public function getUpdateFormUsersAction(int $id): Response
     {
         $userData = $this->userService->getUserData($id);
+        if (empty($userData)) {
+            return new Response('user Not found');
+        }
         $form = $this->createForm(UserUpdateForm::class, '', $userData);
         $content = $this->twig->render("user/userUpdateForm.html.twig", [
             'form' => $form->createView(),
@@ -127,20 +129,22 @@ class UserController extends AbstractController
      */
     public function saveUserAction(Request $request): Response
     {
-        $userName = $request->request->get('name');
-        $userEmail = $request->request->get('email');
-        $userPassword = $request->request->get('password');
-        $userDepartment = $request->request->get('department');
+        $userDTO = new UserDTO([
+            'name' => $request->request->get('name'),
+            'email' => $request->request->get('email'),
+            'password' => $request->request->get('password'),
+            'department' => $request->request->get('department'),
+        ]);
 
-        if ($this->userService->isUserExistByEmail($userEmail)) {
-            return new JsonResponse(['success' => false, 'email ' . strtolower($userEmail) . ' is already exist'], 400);
+        if ($this->userService->isUserExistByEmail($userDTO->getEmail())) {
+            return new JsonResponse(['success' => false, 'email ' . strtolower($userDTO->getEmail()) . ' is already exist'], 400);
         }
 
-        if (!$this->userService->getDepartmentByName($userDepartment)) {
-            return new JsonResponse(['success' => false, 'department ' . $userDepartment . ' doesn\'t exist'], 400);
+        if (!$this->userService->getDepartmentByName($userDTO->getDepartmentName())) {
+            return new JsonResponse(['success' => false, 'department ' . $userDTO->getDepartmentName() . ' doesn\'t exist'], 400);
         }
 
-        $userId = $this->userService->saveUser($userName, $userEmail, $userPassword, $userDepartment);
+        $userId = $this->userService->saveUser($userDTO);
         [$data, $code] = $userId === null ?
             [['success' => false], 400] :
             [['success' => true, 'userId' => $userId], 200];

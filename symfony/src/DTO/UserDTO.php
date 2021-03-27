@@ -26,6 +26,8 @@ class UserDTO
 
     public string $departmentName;
 
+    public array $roles;
+
 
     public function __construct(array $data)
     {
@@ -33,6 +35,7 @@ class UserDTO
         $this->password = $data['password'];
         $this->email = $data['email'];
         $this->departmentName = $data['department'];
+        $this->roles = [];
     }
 
     public function getName(): string
@@ -77,6 +80,22 @@ class UserDTO
     {
         $this->departmentName = $departmentName;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param array $roles
+     */
+    public function setRoles(array $roles): void
+    {
+        $this->roles = $roles;
     }
 
 }

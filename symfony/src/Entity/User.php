@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Security\Core\User\UserInterface;
+use JsonException;
 
 /**
  * @ORM\Table(
@@ -30,19 +31,24 @@ class User implements MetaTimestampsInterface, UserInterface
     private ?int $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=false)
      */
     private string $name;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=false, unique=true)
      */
     private string $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", nullable=false, length=120)
      */
     private string $password;
+
+    /**
+     * @ORM\Column(type="string", length=1024, nullable=false)
+     */
+    private string $roles;
 
     /**
      * @ORM\Column(type="datetime")
@@ -226,23 +232,25 @@ class User implements MetaTimestampsInterface, UserInterface
         return $this;
     }
 
-    public function toArray(): array
+    /**
+     * @throws JsonException
+     */
+    public function getRoles(): array
     {
-        return [
-            'id' => $this->id,
-            'name' => $this->name,
-            'email' => $this->email,
-            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
-            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
-            'lastLoginAt' => $this->lastLoginAt->format('Y-m-d H:i:s'),
-            'image' => $this->image,
-            'department' => $this->department->getName(),
-            'progress' => array_map(static fn(Progress $progress) => $progress->toArray(), $this->progress->toArray()),
-        ];
+        $roles = json_decode($this->roles, true, 512, JSON_THROW_ON_ERROR);
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function getRoles()
+    /**
+     * @param string[] $roles
+     * @throws JsonException
+     */
+    public function setRoles(array $roles): User
     {
+        $this->roles = json_encode($roles, JSON_THROW_ON_ERROR);
+        return $this;
     }
 
     public function getSalt()
@@ -256,5 +264,21 @@ class User implements MetaTimestampsInterface, UserInterface
 
     public function eraseCredentials()
     {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'roles' => $this->getRoles(),
+            'createdAt' => $this->createdAt->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updatedAt->format('Y-m-d H:i:s'),
+            'lastLoginAt' => $this->lastLoginAt->format('Y-m-d H:i:s'),
+            'image' => $this->image,
+            'department' => $this->department->getName(),
+            'progress' => array_map(static fn(Progress $progress) => $progress->toArray(), $this->progress->toArray()),
+        ];
     }
 }
