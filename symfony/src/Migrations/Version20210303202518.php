@@ -29,13 +29,17 @@ final class Version20210303202518 extends AbstractMigration
         $this->addSql('CREATE TABLE progress (id SERIAL NOT NULL, user_id INT DEFAULT NULL, discipline_id INT DEFAULT NULL, percent INT NOT NULL, level INT NOT NULL, necessary_level INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX progress__user_id__ind ON progress (user_id)');
         $this->addSql('CREATE INDEX progress__discipline_id__ind ON progress (discipline_id)');
-        $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, department_id INT DEFAULT NULL, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, password VARCHAR(100) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, last_login_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, is_deleted BOOLEAN DEFAULT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "user" (id SERIAL NOT NULL, department_id INT DEFAULT NULL, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, password VARCHAR(120) NOT NULL, roles VARCHAR(1024) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, last_login_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, image VARCHAR(255) DEFAULT NULL, is_deleted BOOLEAN DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX user__department_id__ind ON "user" (department_id)');
         $this->addSql('ALTER TABLE department_disciplines ADD CONSTRAINT department_disciplines__discipline_id__fk FOREIGN KEY (discipline_id) REFERENCES discipline (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE department_disciplines ADD CONSTRAINT department_disciplines__department_id__fk FOREIGN KEY (department_id) REFERENCES department (id) ON DELETE CASCADE NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE progress ADD CONSTRAINT progress__user_id__fk FOREIGN KEY (user_id) REFERENCES "user" (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE progress ADD CONSTRAINT progress__discipline_id__fk FOREIGN KEY (discipline_id) REFERENCES discipline (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE "user" ADD CONSTRAINT user__department_id__fk FOREIGN KEY (department_id) REFERENCES department (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('CREATE UNIQUE INDEX department_name__ind ON department (name)');
+        $this->addSql('CREATE UNIQUE INDEX discipline_name__ind ON discipline (name)');
+        $this->addSql('CREATE UNIQUE INDEX user_name__ind ON "user" (name)');
+        $this->addSql('CREATE UNIQUE INDEX user_email__ind ON "user" (email)');
     }
 
     public function down(Schema $schema) : void
@@ -52,5 +56,9 @@ final class Version20210303202518 extends AbstractMigration
         $this->addSql('DROP TABLE department_disciplines');
         $this->addSql('DROP TABLE progress');
         $this->addSql('DROP TABLE "user"');
+        $this->addSql('DROP INDEX department_name__ind');
+        $this->addSql('DROP INDEX discipline_name__ind');
+        $this->addSql('DROP INDEX user_name__ind');
+        $this->addSql('DROP INDEX user_email__ind');
     }
 }

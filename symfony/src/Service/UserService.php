@@ -57,6 +57,7 @@ class UserService
             ->setEmail($userDTO->getEmail())
             ->setPassword($this->passwordEncoder->encodePassword($user, $userDTO->getPassword()))
             ->setDepartment($department)
+            ->setRoles($userDTO->getRoles())
             ->setLastLoginAt();
 
         $this->em->persist($user);
