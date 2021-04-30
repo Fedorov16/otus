@@ -5,6 +5,7 @@ namespace App\Service;
 use App\DTO\UserDTO;
 use App\Entity\Department;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
@@ -93,6 +94,15 @@ class UserService
         return new Response($userId . 'was saved');
     }
 
+    public function findUserById(int $userId): ?User
+    {
+        /** @var UserRepository $userRepository */
+        $userRepository = $this->em->getRepository(User::class);
+        /** @var User|null $user */
+        $user = $userRepository->find($userId);
+        return $user;
+    }
+
     public function getDepartmentByName(string $departmentName): ?Department
     {
         $department = $this->em->getRepository(Department::class)->getDepartmentByName($departmentName);
@@ -106,10 +116,6 @@ class UserService
 
     public function deleteUserById(int $userId): bool
     {
-        $user = $this->em->getRepository(User::class)->find($userId);
-        if ($user === null) {
-            return false;
-        }
 
         $user->setIsDeleted(true);
         $user->setUpdatedAt();
@@ -132,8 +138,10 @@ class UserService
             'department' => $user->getDepartment()->getName(),
             ]];
     }
+
     public function getUserById(int $userId): ?User
     {
       return $this->em->getRepository(User::class)->find($userId);
     }
+
 }

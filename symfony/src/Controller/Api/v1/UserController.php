@@ -6,13 +6,18 @@ use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Form\UserCreateForm;
 use App\Form\UserUpdateForm;
+use App\Security\Voters\UserVoter;
 use App\Service\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 /** @Route("/api/v1/user") */
 class UserController extends AbstractController
@@ -25,11 +30,19 @@ class UserController extends AbstractController
      * @var Environment
      */
     private Environment $twig;
+    /**
+     * @var AuthorizationCheckerInterface
+     */
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    public function __construct(UserService $userService, Environment $twig)
-    {
+    public function __construct(
+        UserService $userService,
+        Environment $twig,
+        AuthorizationCheckerInterface $authorizationChecker
+    ) {
         $this->userService = $userService;
         $this->twig = $twig;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -49,11 +62,25 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/view/{id}", methods={"GET"}, requirements={"id":"\d+"})
+     * @param int $id
+     * @return Response
+     */
+    public function getUserAction(int $id): Response
+    {
+        $user = $this->userService->getUserById($id);
+        if (!$user) {
+            return new JsonResponse(['success' => false], 404);
+        }
+        return new JsonResponse(['user' => $user->toArray()], 200);
+    }
+
+    /**
      * @Route("/form/create", methods={"GET"})
      * @return Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function getCreateFormUsersAction(): Response
     {
@@ -67,6 +94,7 @@ class UserController extends AbstractController
      * @Route("/form/create", methods={"POST"})
      * @param Request $request
      * @return Response
+     * @throws \JsonException
      */
     public function createFormUsersAction(Request $request): Response
     {
@@ -85,9 +113,9 @@ class UserController extends AbstractController
      * @Route("/form/update/{id}", methods={"GET"}, requirements={"id":"\d+"})
      * @param int $id
      * @return Response
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function getUpdateFormUsersAction(int $id): Response
     {
@@ -126,6 +154,7 @@ class UserController extends AbstractController
      * @Route("", methods={"POST"})
      * @param Request $request
      * @return Response
+     * @throws \JsonException
      */
     public function saveUserAction(Request $request): Response
     {
@@ -134,6 +163,7 @@ class UserController extends AbstractController
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
             'department' => $request->request->get('department'),
+            'roles' => $request->request->get('roles'),
         ]);
 
         if ($this->userService->isUserExistByEmail($userDTO->getEmail())) {
@@ -178,6 +208,15 @@ class UserController extends AbstractController
      */
     public function deleteUserAction(int $id): Response
     {
+        $user = $this->userService->getUserById($id);
+        if (!$user) {
+            return new JsonResponse(['success' => false], 404);
+        }
+
+        if (!$this->authorizationChecker->isGranted(UserVoter::DELETE, $user)) {
+            return new JsonResponse('Access denied', 403);
+        }
+
         $result = $this->userService->deleteUserById($id);
 
         return new JsonResponse(['success' => $result], $result ? 200 : 404);

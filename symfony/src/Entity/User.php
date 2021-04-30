@@ -245,6 +245,7 @@ class User implements MetaTimestampsInterface, UserInterface
 
     /**
      * @param string[] $roles
+     * @return User
      * @throws JsonException
      */
     public function setRoles(array $roles): User

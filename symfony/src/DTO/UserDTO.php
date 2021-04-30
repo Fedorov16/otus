@@ -2,6 +2,8 @@
 
 namespace App\DTO;
 
+use App\Entity\User;
+use Symfony\Component\HttpFoundation\Exception\JsonException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class UserDTO
@@ -31,11 +33,25 @@ class UserDTO
 
     public function __construct(array $data)
     {
-        $this->name = $data['name'];
-        $this->password = $data['password'];
+        $this->name = $data['name'] ?? '';
+        $this->password = $data['password'] ?? '';
         $this->email = $data['email'];
         $this->departmentName = $data['department'];
-        $this->roles = [];
+        $this->roles = $data['roles'] ? json_decode($data['roles'], true, 512, JSON_THROW_ON_ERROR) : [];
+    }
+
+    /**
+     * @param User $user
+     * @return UserDTO
+     * @throws \JsonException
+     */
+    public static function fromEntity(User $user): self
+    {
+        return new self([
+            'email' => $user->getEmail(),
+            'password' => $user->getPassword(),
+            'roles' => $user->getRoles(),
+        ]);
     }
 
     public function getName(): string
