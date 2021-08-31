@@ -34,8 +34,6 @@
       <path value="$PROJECT_DIR$/symfony/vendor/psr/cache" />
       <path value="$PROJECT_DIR$/symfony/vendor/psr/log" />
       <path value="$PROJECT_DIR$/symfony/vendor/psr/container" />
-      <path value="$PROJECT_DIR$/symfony/vendor/laminas/laminas-eventmanager" />
-      <path value="$PROJECT_DIR$/symfony/vendor/laminas/laminas-zendframework-bridge" />
       <path value="$PROJECT_DIR$/symfony/vendor/laminas/laminas-code" />
       <path value="$PROJECT_DIR$/symfony/vendor/doctrine/migrations" />
       <path value="$PROJECT_DIR$/symfony/vendor/doctrine/doctrine-migrations-bundle" />
@@ -85,7 +83,6 @@
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/debug-bundle" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/security-csrf" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/options-resolver" />
-      <path value="$PROJECT_DIR$/symfony/vendor/symfony/orm-pack" />
       <path value="$PROJECT_DIR$/symfony/vendor/symfony/polyfill-intl-idn" />
       <path value="$PROJECT_DIR$/symfony/vendor/friendsofphp/proxy-manager-lts" />
       <path value="$PROJECT_DIR$/symfony/vendor/webimpress/safe-writer" />
@@ -94,6 +91,7 @@
       <path value="$PROJECT_DIR$/symfony/vendor/gedmo/doctrine-extensions" />
       <path value="$PROJECT_DIR$/symfony/vendor/doctrine/data-fixtures" />
       <path value="$PROJECT_DIR$/symfony/vendor/doctrine/doctrine-fixtures-bundle" />
+      <path value="$PROJECT_DIR$/symfony/vendor/doctrine/deprecations" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">

@@ -1,23 +1,22 @@
-version: "3"
-
+version: '3.1'
 services:
   nginx:
     container_name: otus_nginx
-    build:
-      context: .
-      dockerfile: docker/nginx/Dockerfile
+    image: nginx:1.21.1-alpine
     restart: always
     ports:
-      - "127.0.0.1:91:91"
+      - '127.0.0.1:91:80'
     volumes:
-      - ./symfony/:/var/www/symfony
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    volumes_from:
+      - php
     environment:
-      - VIRTUAL_HOST=otus
+      - VIRTUAL_HOST=dev.otus
     networks:
       - otus
 
   php:
-    container_name: otus_php
+    container_name: otus
     build:
       context: .
       dockerfile: docker/php/Dockerfile
@@ -25,29 +24,22 @@ services:
     environment:
       APP_ENV: dev
     volumes:
-      - ./symfony/:/var/www/symfony
+      - ./:/var/www/html
     networks:
       - otus
 
   postgres:
     container_name: otus_postgres
     image: postgres:11
-    restart: always
     ports:
-      - 5431:5432
+      - "5431:5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=12345
       - POSTGRES_DB=postgres
     networks:
       - otus
-    volumes:
-      - ./postgres/:/var/lib/postgresql/data
 
 networks:
   otus:
     driver: bridge
-
-volumes:
-  otus:
-    external: true
