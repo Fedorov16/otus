@@ -2,31 +2,28 @@
     "parser": "babel-eslint",
     "env": {
         "browser": true,
-        "es6": true
+        "es6": true,
+        "commonjs": true,
+        "node": true
     },
     "plugins": ["prettier"],
     "rules": {
-        "prettier/prettier": "error",
-        "no-case-declarations": 0,
-        "no-console": 0,
-        "no-extra-semi": 0,
-        "no-undef": 0,
-        "no-unused-vars": 0,
-        "no-useless-escape": 0,
-        "no-empty": 0,
-        "no-inner-declarations": 0,
-        "react/display-name": 0,
-        "react/jsx-key": 0,
-        "react/jsx-no-target-blank": 0,
-        "react/no-children-prop": 0,
-        "react/no-deprecated": 0,
-        "react/no-direct-mutation-state": 0,
-        "react/no-find-dom-node": 0,
-        "react/no-string-refs": 0,
-        "react/no-unescaped-entities": 0,
-        "react/no-unknown-property": 0,
-        "react/prop-types": 0,
-        "react/react-in-jsx-scope": 0
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
     },
     "extends": ["eslint:recommended", "plugin:react/recommended"],
     "parserOptions": {

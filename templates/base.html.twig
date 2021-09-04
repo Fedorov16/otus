@@ -8,17 +8,12 @@
         {% block styles %}{% endblock %}
     </head>
     <body>
-{#        {% block header %}#}
-{#            <h2>header</h2>#}
-{#        {% endblock %}#}
         {% block body %}
 
         {% endblock %}
-{#        {% block footer %}#}
-{#            <h2>footer</h2>#}
-{#        {% endblock %}#}
-        <script src="{{ asset('build/app.js') }}"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/all.js"></script>
         <script src="{{ asset('build/runtime.js') }}"></script>
+        <script src="{{ asset('build/app.js') }}"></script>
         {% block scripts %}{% endblock %}
     </body>
 </html>
