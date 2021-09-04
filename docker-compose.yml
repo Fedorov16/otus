@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.2'
 services:
   nginx:
     container_name: otus_nginx
@@ -16,7 +16,7 @@ services:
       - otus
 
   php:
-    container_name: otus
+    container_name: php
     build:
       context: .
       dockerfile: docker/php/Dockerfile
