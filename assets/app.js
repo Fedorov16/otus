@@ -1,5 +1,6 @@
 import React from "react";
+import ReactDom from "react-dom";
 import "./css/global.scss";
-import DomainBlackList from "./domain";
 
-console.log("react");
+import App from "./Components/App";
+ReactDom.render(<App />, document.getElementById("root"));

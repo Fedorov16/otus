@@ -25,4 +25,4 @@ _watch:
 	docker exec -it php yarn encore dev --watch
 
 _router:
-	docker exec -it php php bin/console debug:router --no-
+	docker exec -it php php bin/console debug:router
