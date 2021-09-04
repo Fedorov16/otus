@@ -1,12 +1,21 @@
 {
     "devDependencies": {
-        "@babel/preset-react": "^7.0.0",
+        "@babel/preset-react": "^7.14.5",
         "@symfony/stimulus-bridge": "^1.1.0",
         "@symfony/webpack-encore": "^0.32.0",
+        "@testing-library/jest-dom": "^5.11.4",
+        "@testing-library/react": "^11.1.0",
+        "@testing-library/user-event": "^12.1.10",
         "core-js": "^3.0.0",
+        "react": "^17.0.2",
+        "node-sass": "^4.0.0",
+        "bootstrap": "^5.1.0",
+        "react-dom": "^17.0.2",
+        "react-scripts": "4.0.3",
         "regenerator-runtime": "^0.13.2",
         "sass-loader": "^9.0.1",
         "stimulus": "^2.0.0",
+        "web-vitals": "^1.0.1",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
@@ -15,19 +24,51 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
     },
     "dependencies": {
+        "@babel/core": "^7.15.4",
+        "@babel/plugin-proposal-class-properties": "^7.14.5",
+        "@babel/plugin-proposal-decorators": "^7.15.4",
+        "@babel/plugin-transform-modules-commonjs": "^7.15.4",
+        "@babel/plugin-transform-runtime": "^7.15.0",
+        "@babel/preset-env": "^7.15.4",
+        "@babel/runtime-corejs2": "^7.15.4",
+        "@hot-loader/react-dom": "^17.0.1",
         "@typescript-eslint/eslint-plugin": "^4.30.0",
         "eslint": "^7.12.1",
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.22.1",
         "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-prettier": "^4.0.0",
         "eslint-plugin-promise": "^4.2.1",
         "eslint-plugin-react": "^7.25.1",
         "fs": "0.0.1-security",
-        "node-sass": "^6.0.1",
+        "prettier": "^2.3.2",
         "react": "^17.0.2",
-        "react-router-dom": "^5.2.1"
+        "react-router-dom": "^5.2.1",
+        "typescript": "^4.4.2",
+        "typescript-eslint": "^0.0.1-alpha.0"
     }
 }
