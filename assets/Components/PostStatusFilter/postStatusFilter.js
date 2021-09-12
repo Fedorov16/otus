@@ -4,8 +4,8 @@ import "./post-status-filter.scss";
 const PostStatusFilter = () => {
 	return(
 		<div className="btn-group">
-			<button>one</button>
-			<button>two</button>
+			<button className="btn btn-info">All</button>
+			<button className="btn btn-outline-secondary">Liked</button>
 		</div>
 	);
 };
