@@ -13,7 +13,9 @@ const App = () => {
 		{id: 3, label: "I need a break...", important: false, liked: false},
 	];
 	const [data, setData] = useState(dataFromB);
-	const[id, setId] = useState(data.length+1);
+	const [id, setId] = useState(data.length+1);
+	const [pattern, setPattern] = useState("");
+	const [select, setSelect] = useState("All");
 
 	const handleOnDelete = (id) => {
 		const index = data.findIndex(elem => elem.id === id);
@@ -22,13 +24,13 @@ const App = () => {
 		setData([...before, ...after]);
 	};
 
-	const handleOnSubmit = (e) => {
-		if(!e?.target?.value) {
+	const handleOnSubmit = (label) => {
+		if(!label) {
 			return;
 		}
 		const itemNew = {
 			id: id,
-			label: e.target.value,
+			label: label,
 			important: false,
 			liked: false,
 		};
@@ -55,6 +57,23 @@ const App = () => {
 		return [...before, itemEdit, ...after];
 	};
 
+	const onSearchPosts = (pattern) => {
+		setPattern(pattern);
+	};
+
+	const onFilter = (select) => {
+		setSelect(select);
+	};
+
+	const filterPost = (items, select) => {
+		if (select === "Liked") {
+			return items.filter(item => item.liked);
+		}
+		return items;
+	};
+
+	const filterData = filterPost(data.filter(item => item.label.indexOf(pattern) > -1), select);
+
 	return (
 		<div className="app">
 			<Header
@@ -62,11 +81,16 @@ const App = () => {
 				liked={data.filter(item => item.liked).length}
 			/>
 			<div className="search-panel d-flex">
-				<SearchPanel/>
-				<PostStatusFilter/>
+				<SearchPanel
+					onSearchPosts={onSearchPosts}
+				/>
+				<PostStatusFilter
+					select={select}
+					onFilter={onFilter}
+				/>
 			</div>
 			<PostList
-				data={data}
+				data={filterData}
 				onDelete={handleOnDelete}
 				onToggleImportant={onToggleImportant}
 				onToggleLiked={onToggleLiked}
