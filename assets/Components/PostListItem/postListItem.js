@@ -1,27 +1,17 @@
-import React, {useState} from "react";
+import React from "react";
 import "./post-list-item.scss";
+import PropTypes from "prop-types";
 
-const PostListItem = ({label, important= false, liked = false}) => {
-	const [isImportant, setImportant] = useState(important);
-	const [isLiked, setLiked] = useState(liked);
-	let importantClasses= "btn-star btn-sm isImportant";
-	let likedClasses= "btn-star btn-sm isImportant";
-	if (isImportant) {
-		importantClasses = "btn-star btn-sm";
+const PostListItem = ({label, important= false, liked = false, onDelete, onToggleImportant, onToggleLiked}) => {
+
+	let importantClasses= "btn-star btn-sm default";
+	let likedClasses= "btn-star btn-sm default";
+	if (important) {
+		importantClasses = "btn-star btn-sm isImportant";
 	}
-	if (isLiked) {
+	if (liked) {
 		likedClasses = "btn-sm isLiked";
 	}
-
-	const handlerImportant = (e) => {
-		setImportant(!isImportant);
-		e.currentTarget.classList.toggle("isImportant");
-	};
-
-	const handlerLiked = (e) => {
-		setLiked(!isLiked);
-		e.currentTarget.classList.toggle("isLiked");
-	};
 
 	return(
 		<div className='app-list-item d-flex justify-content-between'>
@@ -29,18 +19,27 @@ const PostListItem = ({label, important= false, liked = false}) => {
 				{label}
 			</span>
 			<div className="d-flex justify-content-center align-items-center">
-				<button type="button" className={importantClasses} onClick={(e) => handlerImportant(e)}>
+				<button type="button" className={importantClasses} onClick={onToggleImportant}>
 					<i className="fa fa-star"/>
 				</button>
-				<button type="button" className="btn-trash btn-sm">
+				<button type="button" className="btn-trash btn-sm" onClick={onDelete}>
 					<i className="fa fa-trash"/>
 				</button>
-				<button type="button" className={likedClasses} onClick={(e) => handlerLiked(e)}>
+				<button type="button" className={likedClasses} onClick={onToggleLiked}>
 					<i className="fa fa-bullhorn"/>
 				</button>
 			</div>
 		</div>
 	);
+};
+
+PostListItem.propTypes = {
+	label: PropTypes.string,
+	important: PropTypes.bool,
+	liked: PropTypes.bool,
+	onDelete: PropTypes.func,
+	onToggleImportant: PropTypes.func,
+	onToggleLiked: PropTypes.func,
 };
 
 export default PostListItem;

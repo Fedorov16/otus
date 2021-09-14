@@ -53,10 +53,9 @@
     color: #aeaeae;
 }
 
-.isLiked {
-  color: red;
-}
-
-.isImportant {
+.default{
   color: #0e0e0e!important;
+}
+.isLiked, .isImportant {
+  color: #FFD700;
 }

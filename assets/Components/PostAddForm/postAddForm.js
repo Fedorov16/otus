@@ -1,19 +1,27 @@
-import React from "react";
+import React, {useState} from "react";
 import "./post-add-form.scss";
+import PropTypes from "prop-types";
 
-const PostAddForm = () => {
+const PostAddForm = ({onSubmit}) => {
+	const [itemMessage, setItemMessage] = useState();
+
 	return(
-		<form className="bottom-panel d-flex">
+		<div className="bottom-panel d-flex">
 			<input
 				type="text"
 				placeholder="What are you thinking about"
 				className="form-control new-post-label"
+				onChange={setItemMessage}
 			/>
-			<button type="submit" className="btn-outline-secondary">
+			<button type="submit" className="btn-outline-secondary" onClick={() => onSubmit(itemMessage)}>
                 Add post
 			</button>
-		</form>
+		</div>
 	);
+};
+
+PostAddForm.propTypes = {
+	onSubmit: PropTypes.func
 };
 
 export default PostAddForm;
