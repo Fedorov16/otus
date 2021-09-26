@@ -5,6 +5,7 @@ import PostStatusFilter from "../PostStatusFilter";
 import PostList from "../PostList";
 import PostAddForm from "../PostAddForm";
 import "./app.scss";
+import DropdownExampleSearchSelection from "../SearchUIPanel";
 
 const App = () => {
 	const dataFromB = [
@@ -98,6 +99,7 @@ const App = () => {
 			<PostAddForm
 				onSubmit={handleOnSubmit}
 			/>
+			{/*<DropdownExampleSearchSelection/>*/}
 		</div>
 	);
 };
